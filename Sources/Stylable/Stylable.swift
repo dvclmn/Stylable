@@ -17,17 +17,31 @@ import SwiftUI
 /// ```
 ///
 
+public protocol StyleConfiguration: Sendable {
+  static var initial: Self { get }
+}
 
 
 public protocol Stylable {
-  associatedtype StyleConfiguration
+  associatedtype Config: StyleConfiguration
   var config: StyleConfiguration { get set }
-  func modified(_ transform: (inout StyleConfiguration) -> Void) -> Self
+  
+//  func applying(_ transform: (inout Self) -> Void) -> Self
+  
+  func modified(_ transform: (inout Self) -> Void) -> Self
 }
 
-public protocol StyleConfiguration {
-  static var `default`: Self { get }
+public extension View where Self: Stylable {
+  func withStyle(_ transform: (inout Config) -> Void) -> some View {
+    var config = Config.initial
+    transform(&config)
+    return self.modified { $0.config = config }
+  }
 }
+
+//public protocol StyleConfiguration {
+//  static var `default`: Self { get }
+//}
 
 public extension Stylable {
   
@@ -64,13 +78,14 @@ public extension Stylable {
 //  }
 //}
 
-public extension View {
-  func withStyle(_ style: Self.StyleConfiguration) -> some View where Self: Stylable, Self.StyleConfiguration: StyleConfiguration {
-    var copy = self
-    copy.config = style
-    return copy
-  }
-}
+//public extension View {
+//  func withStyle(_ style: Self.StyleConfiguration) -> some View where Self: Stylable, Self.StyleConfiguration: StyleConfiguration {
+//    var copy = self
+//    copy.config = style
+//    return copy
+//  }
+//}
+
 
 //public struct StylerModifier: ViewModifier {
 //  
