@@ -17,10 +17,16 @@ import SwiftUI
 /// ```
 ///
 
+
+
 public protocol Stylable {
   associatedtype StyleConfiguration
   var config: StyleConfiguration { get set }
   func modified(_ transform: (inout StyleConfiguration) -> Void) -> Self
+}
+
+public protocol StyleConfiguration {
+  static var `default`: Self { get }
 }
 
 public extension Stylable {
@@ -50,11 +56,19 @@ public extension Stylable {
 
 
 
+//
+//public extension View where Self: Stylable {
+//  
+//  func stylable<S>(_ config: S) -> some View where S == Self.StyleConfiguration {
+//    return self.modified { $0 = config }
+//  }
+//}
 
-public extension View where Self: Stylable {
-  
-  func stylable<S>(_ config: S) -> some View where S == Self.StyleConfiguration {
-    return self.modified { $0 = config }
+public extension View {
+  func withStyle(_ style: Self.StyleConfiguration) -> some View where Self: Stylable, Self.StyleConfiguration: StyleConfiguration {
+    var copy = self
+    copy.config = style
+    return copy
   }
 }
 
