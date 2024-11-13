@@ -17,27 +17,27 @@ import SwiftUI
 /// ```
 ///
 
-public protocol StyleConfiguration: Sendable {
-  static var initial: Self { get }
-}
+//public protocol StyleConfiguration: Sendable {
+//  static var initial: Self { get }
+//}
 
 
 public protocol Stylable {
-  associatedtype Config: StyleConfiguration
-  var config: StyleConfiguration { get set }
+  associatedtype Config
+  var config: Config { get set }
   
 //  func applying(_ transform: (inout Self) -> Void) -> Self
   
-  func modified(_ transform: (inout Self) -> Void) -> Self
+//  func modified(_ transform: (inout Self) -> Void) -> Self
 }
 
-public extension View where Self: Stylable {
-  func withStyle(_ transform: (inout Config) -> Void) -> some View {
-    var config = Config.initial
-    transform(&config)
-    return self.modified { $0.config = config }
-  }
-}
+//public extension View where Self: Stylable {
+//  func withStyle(_ transform: (inout Config) -> Void) -> some View {
+//    var config = Config.initial
+//    transform(&config)
+//    return self.modified { $0.config = config }
+//  }
+//}
 
 //public protocol StyleConfiguration {
 //  static var `default`: Self { get }
@@ -52,20 +52,20 @@ public extension Stylable {
   /// - Parameter transform: A closure that modifies the configuration
   /// - Returns: A new instance with the modified configuration
   ///
-  func modified(_ transform: (inout StyleConfiguration) -> Void) -> Self {
-    var new = self
-    transform(&new.config)
-    return new
-  }
+//  func modified(_ transform: (inout StyleConfiguration) -> Void) -> Self {
+//    var new = self
+//    transform(&new.config)
+//    return new
+//  }
   
   /// Pass in a whole specific config, from somewhere else, no changes
   //  func with(_ newConfig: StyleConfiguration) -> Self {
   //    modified { $0 = newConfig }
   //  }
   
-  func with(_ config: StyleConfiguration) -> Self {
-    modified { $0 = config }
-  }
+//  func with(_ config: StyleConfiguration) -> Self {
+//    modified { $0 = config }
+//  }
 }
 
 
@@ -78,13 +78,13 @@ public extension Stylable {
 //  }
 //}
 
-//public extension View {
-//  func withStyle(_ style: Self.StyleConfiguration) -> some View where Self: Stylable, Self.StyleConfiguration: StyleConfiguration {
-//    var copy = self
-//    copy.config = style
-//    return copy
-//  }
-//}
+public extension View {
+  func withStyle(_ style: Self.Config) -> some View where Self: Stylable {
+    var copy = self
+    copy.config = style
+    return copy
+  }
+}
 
 
 //public struct StylerModifier: ViewModifier {
